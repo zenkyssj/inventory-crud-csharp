@@ -1,6 +1,19 @@
+using Core.DTOs;
+using Core.Models;
+using Core.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddKeyedScoped<ICommonService<ProductDto, ProductInserDto, ProductUpdateDto>, ProductService>("productService");
+builder.Services.AddKeyedScoped<ICommonService<UserDto, UserInserDto, UserUpdateDto>, UserService>("userService");
+
+// EntityFramework
+builder.Services.AddDbContext<SistemaVentasContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("UserConnection"));
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

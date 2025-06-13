@@ -1,4 +1,5 @@
-﻿using Core.DTOs;
+﻿using Azure.Identity;
+using Core.DTOs;
 using Core.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -51,5 +52,7 @@ namespace WebApi.Controllers
 
             return productDto == null ? NotFound() : Ok(productDto);
         }
+
+        //TODO : IMPLEMENTAR LOGICA DE PRODUCT SERVICE
     }
 }

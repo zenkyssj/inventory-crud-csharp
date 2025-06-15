@@ -12,9 +12,9 @@ namespace WebApi.Controllers
     {
         private ICommonService<ProductDto, ProductInserDto, ProductUpdateDto> _productService;
 
-        public ProductController([FromKeyedServices("productService")] ICommonService<ProductDto, ProductInserDto, ProductUpdateDto> productDto)
+        public ProductController([FromKeyedServices("productService")] ICommonService<ProductDto, ProductInserDto, ProductUpdateDto> productService)
         {
-            _productService = productDto;
+            _productService = productService;
         }
 
         [HttpGet]
@@ -53,6 +53,6 @@ namespace WebApi.Controllers
             return productDto == null ? NotFound() : Ok(productDto);
         }
 
-        //TODO : IMPLEMENTAR LOGICA DE PRODUCT SERVICE
+        
     }
 }

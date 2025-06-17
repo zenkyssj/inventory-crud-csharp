@@ -9,7 +9,6 @@ namespace Core.DTOs
     public class VentaInsertDto
     {
         //public DateTime Fecha { get; set; }
-        public decimal? Total { get; set; }
         public int IdCliente { get; set; }
         public List<ConceptDto> Concepts { get; set; }
     }

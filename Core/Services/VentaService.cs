@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -53,42 +54,55 @@ namespace Core.Services
 
         public async Task<VentaDto> Add(VentaInsertDto insertDto)
         {
-            var venta = new Ventum()
+            using (var transaction = _context.Database.BeginTransaction())
             {
-                Fecha = DateTime.Now,
-                Total = insertDto.Total,
-                IdCliente = insertDto.IdCliente,
-
-            };
-
-            await _context.AddAsync(venta);
-            await _context.SaveChangesAsync();
-
-            foreach (var concept in insertDto.Concepts)
-            {
-                var concepto = new Concepto()
+                try
                 {
-                    IdVenta = venta.Id,
-                    Cantidad = concept.Cantidad,
-                    PrecioUnitario = concept.PrecioUnitario,
-                    Importe = concept.Importe,
-                    IdProducto = concept.IdProducto                  
-                };
-                await _context.AddAsync(concepto);
-                
+                    var venta = new Ventum()
+                    {
+                        Fecha = DateTime.Now,
+                        Total = insertDto.Concepts.Sum(t => t.Cantidad * t.PrecioUnitario),
+                        IdCliente = insertDto.IdCliente,
+
+                    };
+
+                    await _context.AddAsync(venta);
+                    await _context.SaveChangesAsync();
+
+                    foreach (var concept in insertDto.Concepts)
+                    {
+                        var concepto = new Concepto()
+                        {
+                            IdVenta = venta.Id,
+                            Cantidad = concept.Cantidad,
+                            PrecioUnitario = concept.PrecioUnitario,
+                            Importe = concept.Importe,
+                            IdProducto = concept.IdProducto
+                        };
+
+                        await _context.AddAsync(concepto);
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                    var ventaDto = new VentaDto
+                    {
+                        Id = venta.Id,
+                        Fecha = venta.Fecha,
+                        Total = venta.Total,
+                        IdCliente = venta.IdCliente
+                    };
+
+                    transaction.Commit();
+                    return ventaDto;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
             }
 
-            await _context.SaveChangesAsync();
-
-            var ventaDto = new VentaDto
-            {
-                Id = venta.Id,
-                Fecha = venta.Fecha,
-                Total = venta.Total,
-                IdCliente = venta.IdCliente
-            };
-
-            return ventaDto;
+            return null;
         }
 
         public async Task<VentaDto> Update(int id, VentaUpdateDto updateDto)

@@ -33,7 +33,7 @@ namespace WebApi.Controllers
         {
             var ventaDto = await _ventaService.Add(insertDto);
 
-            return CreatedAtAction(nameof(GetById), new { id = ventaDto.Id }, ventaDto);
+            return ventaDto == null ? BadRequest() : CreatedAtAction(nameof(GetById), new { id = ventaDto.Id }, ventaDto);
         }
 
         [HttpPut("{id}")]

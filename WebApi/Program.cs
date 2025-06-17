@@ -10,6 +10,7 @@ builder.Services.AddKeyedScoped<ICommonService<ProductDto, ProductInserDto, Prod
 builder.Services.AddKeyedScoped<ICommonService<UserDto, UserInserDto, UserUpdateDto>, UserService>("userService");
 builder.Services.AddKeyedScoped<ICommonService<CategoryDto, CategoryInsertDto, CategoryUpdateDto>, CategoryService>("categoryService");
 builder.Services.AddKeyedScoped<ICommonService<VentaDto, VentaInsertDto, VentaUpdateDto>, VentaService>("ventaService");
+builder.Services.AddKeyedScoped<IConceptService<ConceptDto>, ConceptService>("conceptService");
 
 // EntityFramework
 builder.Services.AddDbContext<SistemaVentasContext>(options =>

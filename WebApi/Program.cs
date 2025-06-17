@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddKeyedScoped<ICommonService<ProductDto, ProductInserDto, ProductUpdateDto>, ProductService>("productService");
 builder.Services.AddKeyedScoped<ICommonService<UserDto, UserInserDto, UserUpdateDto>, UserService>("userService");
 builder.Services.AddKeyedScoped<ICommonService<CategoryDto, CategoryInsertDto, CategoryUpdateDto>, CategoryService>("categoryService");
+builder.Services.AddKeyedScoped<ICommonService<VentaDto, VentaInsertDto, VentaUpdateDto>, VentaService>("ventaService");
 
 // EntityFramework
 builder.Services.AddDbContext<SistemaVentasContext>(options =>

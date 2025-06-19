@@ -15,5 +15,7 @@ public partial class User
 
     public string? Password { get; set; }
 
+    public int? Rol { get; set; }
+
     public virtual ICollection<Ventum> Venta { get; set; } = new List<Ventum>();
 }

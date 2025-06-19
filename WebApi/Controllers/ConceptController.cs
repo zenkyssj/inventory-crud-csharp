@@ -1,6 +1,7 @@
 ﻿using Core.DTOs;
 using Core.Models;
 using Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ConceptController : ControllerBase
     {
         private IConceptService<ConceptDto> _conceptService;

@@ -1,5 +1,6 @@
 ﻿using Core.DTOs;
 using Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class VentaController : ControllerBase
     {
         private ICommonService<VentaDto, VentaInsertDto, VentaUpdateDto> _ventaService;
@@ -44,6 +46,7 @@ namespace WebApi.Controllers
             return ventaDto == null ? NotFound() : Ok(ventaDto);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<VentaDto>> Delete(int id)
         {

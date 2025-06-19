@@ -52,7 +52,7 @@ namespace WebApi.Controllers
             return userDto == null ? NotFound() : Ok(userDto);
         }
 
-        //[Authorize(Roles = "2")]
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<UserDto>> Delete(int id)
         {

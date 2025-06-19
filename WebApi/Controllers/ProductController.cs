@@ -1,6 +1,7 @@
 ﻿using Azure.Identity;
 using Core.DTOs;
 using Core.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +9,7 @@ namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private ICommonService<ProductDto, ProductInserDto, ProductUpdateDto> _productService;

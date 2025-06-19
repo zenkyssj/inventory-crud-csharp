@@ -54,7 +54,7 @@ namespace Core.Services
                     [
                         new(ClaimTypes.NameIdentifier, user.Id.ToString()),
                         new(ClaimTypes.Email, user.Email),
-                        new(ClaimTypes.Role, user.Rol.ToString())
+                        new(ClaimTypes.Role, user.Rol)
                     ]
                     ),
                 Expires = DateTime.UtcNow.AddDays(1),

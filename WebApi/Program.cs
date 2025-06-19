@@ -5,6 +5,7 @@ using Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,7 +46,8 @@ builder.Services.AddAuthentication(d =>
           ValidateIssuerSigningKey = true,
           IssuerSigningKey = new SymmetricSecurityKey(key),
           ValidateIssuer = false,
-          ValidateAudience = false
+          ValidateAudience = false,
+          RoleClaimType = ClaimTypes.Role
       };
   });
 

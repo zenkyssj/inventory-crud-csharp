@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Core.Models;
 using Core.Services;
 using Core.DTOs;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private ICommonService<UserDto, UserInserDto, UserUpdateDto> _userService;

@@ -114,7 +114,10 @@ public partial class SistemaVentasContext : DbContext
                 .HasMaxLength(70)
                 .IsUnicode(false)
                 .HasColumnName("password");
-            entity.Property(e => e.Rol).HasColumnName("rol");
+            entity.Property(e => e.Rol)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("rol");
         });
 
         modelBuilder.Entity<Ventum>(entity =>

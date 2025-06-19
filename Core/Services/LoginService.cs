@@ -51,13 +51,13 @@ namespace Core.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(
-                    new Claim[]
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                        new Claim(ClaimTypes.Email, user.Email)
-                    }
+                    [
+                        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                        new(ClaimTypes.Email, user.Email),
+                        new(ClaimTypes.Role, user.Rol.ToString())
+                    ]
                     ),
-                Expires = DateTime.UtcNow.AddDays(30),
+                Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

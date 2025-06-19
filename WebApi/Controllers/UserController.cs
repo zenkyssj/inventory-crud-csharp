@@ -5,6 +5,8 @@ using Core.Models;
 using Core.Services;
 using Core.DTOs;
 using Microsoft.AspNetCore.Authorization;
+using Core.Tools;
+using System.Security.Claims;
 
 
 namespace WebApi.Controllers
@@ -50,9 +52,11 @@ namespace WebApi.Controllers
             return userDto == null ? NotFound() : Ok(userDto);
         }
 
+        //[Authorize(Roles = "2")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<UserDto>> Delete(int id)
         {
+
             var userDto = await _userService.Delete(id);
 
             return userDto == null? NotFound() : Ok(userDto);

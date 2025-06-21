@@ -31,6 +31,7 @@ namespace WebApi.Controllers
             return productDto == null ? NotFound() : Ok(productDto);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<ProductDto>> Add(ProductInserDto insertDto)
         {
@@ -39,6 +40,7 @@ namespace WebApi.Controllers
             return CreatedAtAction(nameof(GetById), new {id = productDto.Id}, productDto);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")] 
         public async Task<ActionResult<ProductDto>> Update(int id,  ProductUpdateDto updateDto)
         {
@@ -47,6 +49,7 @@ namespace WebApi.Controllers
             return productDto == null ? NotFound() : Ok(productDto);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ProductDto>> Delete(int id)
         {

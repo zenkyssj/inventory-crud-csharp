@@ -31,6 +31,7 @@ namespace WebApi.Controllers
             return categoryDto == null ? NotFound() : Ok(categoryDto);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<CategoryDto>> Add(CategoryInsertDto inserDto)
         {
@@ -39,6 +40,7 @@ namespace WebApi.Controllers
             return CreatedAtAction(nameof(GetById), new { id = categoryDto.Id }, categoryDto);        
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<CategoryDto>> Update(int id, CategoryUpdateDto inserDto)
         {
@@ -47,6 +49,7 @@ namespace WebApi.Controllers
             return categoryDto == null ? NotFound() : Ok(categoryDto);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult<CategoryDto>> Delete(int id)
         {

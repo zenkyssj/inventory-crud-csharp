@@ -36,6 +36,7 @@ namespace WebApi.Controllers
             return userDto == null ? NotFound(): Ok(userDto);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         public async Task<ActionResult<UserDto>> Add(UserInserDto userInserDto)
         {
@@ -44,6 +45,7 @@ namespace WebApi.Controllers
             return Ok(userDto);
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> Update(int id, UserUpdateDto userUpdate)
         {

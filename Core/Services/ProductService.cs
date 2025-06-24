@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Core.Services
 {
-    public class ProductService : ICommonService<ProductDto, ProductInserDto, ProductUpdateDto>
+    public class ProductService : ICommonService<ProductDto, ProductInserDto, ProductUpdateDto> 
     {
         private SistemaVentasContext _context;
 

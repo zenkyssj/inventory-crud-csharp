@@ -17,6 +17,7 @@ namespace WebApi.Controllers
         public ProductController([FromKeyedServices("productService")] ICommonService<ProductDto, ProductInserDto, ProductUpdateDto> productService)
         {
             _productService = productService;
+
         }
 
         [HttpGet]
@@ -30,6 +31,7 @@ namespace WebApi.Controllers
 
             return productDto == null ? NotFound() : Ok(productDto);
         }
+
 
         [Authorize(Roles = "admin")]
         [HttpPost]

@@ -13,10 +13,13 @@ namespace WebApi.Controllers
     public class ConceptController : ControllerBase
     {
         private IConceptService<ConceptDto> _conceptService;
+        private IReportService<ConceptDto> _conceptReportService;
 
-        public ConceptController([FromKeyedServices("conceptService")] IConceptService<ConceptDto> conceptService)
+        public ConceptController([FromKeyedServices("conceptService")] IConceptService<ConceptDto> conceptService,
+            [FromKeyedServices("conceptReportService")] IReportService<ConceptDto> conceptReportService)
         {
             _conceptService = conceptService;
+            _conceptReportService = conceptReportService;
         }
 
         [HttpGet]
@@ -31,8 +34,10 @@ namespace WebApi.Controllers
 
             return conceptDto == null ? NotFound() : Ok(conceptDto);
         }
-             
-        
+
+        [HttpGet("best")]
+        public async Task<IEnumerable<ConceptDto>> GetBest() =>
+            await _conceptReportService.GetBest();
 
     }
 }

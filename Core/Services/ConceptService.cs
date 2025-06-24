@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Core.Services
 {
-    public class ConceptService : IConceptService<ConceptDto>
+    public class ConceptService : IConceptService<ConceptDto>, IReportService<ConceptDto>
     {
         private SistemaVentasContext _context;
 
@@ -32,6 +32,31 @@ namespace Core.Services
                 Importe = c.Importe,
                 IdProducto = c.IdProducto,
             });
+        }
+
+        public async Task<IEnumerable<ConceptDto>> GetBest()
+        {
+            var concepts = await _context.Conceptos.ToListAsync();
+            var products = await _context.Productos.ToListAsync();
+
+            var best = concepts.OrderBy(c => c.IdProducto)
+                .Select(p => new ConceptDto
+                {
+                    Id = p.Id,
+                    IdVenta = p.IdVenta,
+                    Cantidad = p.Cantidad,
+                    PrecioUnitario = p.PrecioUnitario,
+                    Importe = p.Importe,
+                    IdProducto = p.IdProducto,                                     
+                });
+
+            return best;
+            
+        }
+
+        public Task<IEnumerable<ConceptDto>> GetWorst()
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<ConceptDto> GetById(int id)

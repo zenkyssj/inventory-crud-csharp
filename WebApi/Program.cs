@@ -19,7 +19,7 @@ builder.Services.AddKeyedScoped<ICommonService<CategoryDto, CategoryInsertDto, C
 builder.Services.AddKeyedScoped<ICommonService<VentaDto, VentaInsertDto, VentaUpdateDto>, VentaService>("ventaService");
 
 builder.Services.AddKeyedScoped<IConceptService<ConceptDto>, ConceptService>("conceptService");
-builder.Services.AddKeyedScoped<IReportService<ConceptDto>, ConceptService>("conceptReportService");
+builder.Services.AddKeyedScoped<IReportService<ProductDto>, ConceptService>("conceptReportService");
 
 builder.Services.AddKeyedScoped<ILoginService, LoginService>("loginService");
 

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Core.Services
 {
-    public class ConceptService : IConceptService<ConceptDto>, IReportService<ConceptDto>
+    public class ConceptService : IConceptService<ConceptDto>, IReportService<ProductDto>
     {
         private SistemaVentasContext _context;
 
@@ -34,27 +34,35 @@ namespace Core.Services
             });
         }
 
-        public async Task<IEnumerable<ConceptDto>> GetBest()
+        public async Task<IEnumerable<ProductDto>> GetBest()
         {
             var concepts = await _context.Conceptos.ToListAsync();
             var products = await _context.Productos.ToListAsync();
 
-            var best = concepts.OrderBy(c => c.IdProducto)
-                .Select(p => new ConceptDto
+            var bestSales = concepts.OrderBy(x => x.IdProducto)
+                .GroupBy(c => c.IdProducto)
+                .Select(p => new 
                 {
-                    Id = p.Id,
-                    IdVenta = p.IdVenta,
-                    Cantidad = p.Cantidad,
-                    PrecioUnitario = p.PrecioUnitario,
-                    Importe = p.Importe,
-                    IdProducto = p.IdProducto,                                     
-                });
+                    ProductID = p.Key,
+                    Count = p.Count(),
+                }).ToList();
 
-            return best;
+            var bestSellingProducts = products.Join(bestSales, p => p.Id, bs => bs.ProductID, (p, bs) => new { ProductID = p, Count = bs.Count })
+                .OrderBy(x => x.Count)
+                .Select(x => new ProductDto
+                {
+                    Id = x.ProductID.Id,
+                    Nombre = x.ProductID.Nombre,
+                    PrecioUnitario = x.ProductID.PrecioUnitario,
+                    Costo = x.ProductID.Costo,
+                    Id_Categoria = x.ProductID.IdCategoria
+                }).ToList();
+
+            return bestSellingProducts;
             
         }
 
-        public Task<IEnumerable<ConceptDto>> GetWorst()
+        public Task<IEnumerable<ProductDto>> GetWorst()
         {
             throw new NotImplementedException();
         }

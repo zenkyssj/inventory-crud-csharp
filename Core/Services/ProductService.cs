@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Core.Services
 {
-    public class ProductService : ICommonService<ProductDto, ProductInserDto, ProductUpdateDto> 
+    public class ProductService : ICommonService<ProductDto, ProductInserDto, ProductUpdateDto>, IReportService<ProductSellingDto> 
     {
         private SistemaVentasContext _context;
 
@@ -135,6 +135,61 @@ namespace Core.Services
             return null;
         }
 
+        public async Task<IEnumerable<ProductSellingDto>> GetBest()
+        {
+            var concepts = await _context.Conceptos.ToListAsync();
+            var products = await _context.Productos.ToListAsync();
 
+            var bestSales = concepts.OrderBy(x => x.IdProducto)
+                .GroupBy(c => c.IdProducto)
+                .Select(p => new
+                {
+                    ProductID = p.Key,
+                    Total = p.Sum(c => c.Cantidad)                  
+                }).ToList();
+
+            return products.Join(bestSales, p => p.Id, bs => bs.ProductID, (p, bs) => new { ProductID = p, Total = bs.Total })
+                .OrderByDescending(x => x.Total)
+                .Select(x => new ProductSellingDto
+                {
+                    Id = x.ProductID.Id,
+                    Nombre = x.ProductID.Nombre,
+                    PrecioUnitario = x.ProductID.PrecioUnitario,
+                    Costo = x.ProductID.Costo,
+                    Id_Categoria = x.ProductID.IdCategoria,
+                    TotalVentas = x.Total,
+                }).ToList();
+
+            
+        }
+
+        public async Task<IEnumerable<ProductSellingDto>> GetWorst()
+        {
+            var concepts = await _context.Conceptos.ToListAsync();
+            var products = await _context.Productos.ToListAsync();
+
+            var worstSales = concepts.OrderBy(x => x.IdProducto)
+                .GroupBy(c => c.IdProducto)
+                .Select(p => new
+                {
+                    ProductID = p.Key,
+                    Total = p.Sum(c => c.Cantidad)
+                })
+                .ToList();
+
+            return products.Join(worstSales, p => p.Id, bs => bs.ProductID, (p, bs) => new {ProductID = p, Total = bs.Total })
+                    .OrderBy(x => x.Total)
+                    .Select(x => new ProductSellingDto
+                    {
+                        Id = x.ProductID.Id,
+                        Nombre = x.ProductID.Nombre,
+                        PrecioUnitario = x.ProductID.PrecioUnitario,
+                        Costo = x.ProductID.Costo,
+                        Id_Categoria = x.ProductID.IdCategoria,
+                        TotalVentas = x.Total,
+                    })
+                    .ToList();
+           
+        }
     }
 }

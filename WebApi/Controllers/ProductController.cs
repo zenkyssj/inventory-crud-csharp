@@ -13,11 +13,13 @@ namespace WebApi.Controllers
     public class ProductController : ControllerBase
     {
         private ICommonService<ProductDto, ProductInserDto, ProductUpdateDto> _productService;
+        private IReportService<ProductSellingDto> _reportService;
 
-        public ProductController([FromKeyedServices("productService")] ICommonService<ProductDto, ProductInserDto, ProductUpdateDto> productService)
+        public ProductController([FromKeyedServices("productService")] ICommonService<ProductDto, ProductInserDto, ProductUpdateDto> productService,
+            [FromKeyedServices("productReportService")] IReportService<ProductSellingDto> reportService)
         {
             _productService = productService;
-
+            _reportService = reportService;
         }
 
         [HttpGet]
@@ -32,6 +34,13 @@ namespace WebApi.Controllers
             return productDto == null ? NotFound() : Ok(productDto);
         }
 
+        [HttpGet("bestselling")]
+        public async Task<IEnumerable<ProductSellingDto>> GetBest() =>
+            await _reportService.GetBest();
+
+        [HttpGet("worstselling")]
+        public async Task<IEnumerable<ProductSellingDto>> GetWors() =>
+            await _reportService.GetWorst();
 
         [Authorize(Roles = "admin")]
         [HttpPost]

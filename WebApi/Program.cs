@@ -13,13 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddKeyedScoped<ICommonService<ProductDto, ProductInserDto, ProductUpdateDto>, ProductService>("productService");
+builder.Services.AddKeyedScoped<IReportService<ProductSellingDto>, ProductService>("productReportService");
 
 builder.Services.AddKeyedScoped<ICommonService<UserDto, UserInserDto, UserUpdateDto>, UserService>("userService");
 builder.Services.AddKeyedScoped<ICommonService<CategoryDto, CategoryInsertDto, CategoryUpdateDto>, CategoryService>("categoryService");
 builder.Services.AddKeyedScoped<ICommonService<VentaDto, VentaInsertDto, VentaUpdateDto>, VentaService>("ventaService");
 
 builder.Services.AddKeyedScoped<IConceptService<ConceptDto>, ConceptService>("conceptService");
-builder.Services.AddKeyedScoped<IReportService<ProductDto>, ConceptService>("conceptReportService");
 
 builder.Services.AddKeyedScoped<ILoginService, LoginService>("loginService");
 

@@ -1,4 +1,5 @@
-﻿using Core.DTOs;
+﻿using Azure.Identity;
+using Core.DTOs;
 using Core.Models;
 using Core.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -34,10 +35,6 @@ namespace WebApi.Controllers
 
             return conceptDto == null ? NotFound() : Ok(conceptDto);
         }
-
-        [HttpGet("best")]
-        public async Task<IEnumerable<ProductDto>> GetBest() =>
-            await _conceptReportService.GetBest();
 
     }
 }

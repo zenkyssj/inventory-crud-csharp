@@ -1,5 +1,6 @@
 ﻿using Core.DTOs;
 using Core.Models;
+using Core.Repository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,16 +13,22 @@ namespace Core.Services
 {
     public class VentaService : ICommonService<VentaDto, VentaInsertDto, VentaUpdateDto>
     {
-        private SistemaVentasContext _context;
+        private ICommonRepository<Ventum> _saleRepository;
+        private IEditableRepository<Ventum> _editableRepository;
+        private ITransactionRepository _transactionRepository;
 
-        public VentaService(SistemaVentasContext context)
+        public VentaService(ICommonRepository<Ventum> saleRepository,
+            IEditableRepository<Ventum> editableRepository,
+            ITransactionRepository transactionRepository)
         {
-            _context = context;
+            _saleRepository = saleRepository;
+            _editableRepository = editableRepository;
+            _transactionRepository = transactionRepository;
         }
 
         public async Task<IEnumerable<VentaDto>> Get()
         {
-            var ventas = await _context.Venta.ToListAsync();
+            var ventas = await _saleRepository.Get();
 
             return ventas.Select(v => new VentaDto
             {
@@ -34,7 +41,7 @@ namespace Core.Services
 
         public async Task<VentaDto> GetById(int id)
         {
-            var venta = await _context.Venta.FindAsync(id);
+            var venta = await _saleRepository.GetById(id);
 
             if (venta != null)
             {
@@ -54,7 +61,7 @@ namespace Core.Services
 
         public async Task<VentaDto> Add(VentaInsertDto insertDto)
         {
-            using (var transaction = _context.Database.BeginTransaction())
+            using (var transaction = _transactionRepository.Transaction())
             {
                 try
                 {
@@ -66,8 +73,8 @@ namespace Core.Services
 
                     };
 
-                    await _context.AddAsync(venta);
-                    await _context.SaveChangesAsync();
+                    await _editableRepository.Add(venta);
+                    await _editableRepository.Save();
 
                     foreach (var concept in insertDto.Concepts)
                     {
@@ -83,7 +90,7 @@ namespace Core.Services
                         await _context.AddAsync(concepto);
                     }
 
-                    await _context.SaveChangesAsync();
+                    await _editableRepository.Save();
 
                     var ventaDto = new VentaDto
                     {
@@ -107,16 +114,15 @@ namespace Core.Services
 
         public async Task<VentaDto> Update(int id, VentaUpdateDto updateDto)
         {
-            var venta = await _context.Venta.FindAsync(id);
+            var venta = await _saleRepository.GetById(id);
 
             if (venta != null)
             {
                 venta.IdCliente = updateDto.IdCliente;
 
-                _context.Venta.Attach(venta);
-                _context.Venta.Entry(venta).State = EntityState.Modified;
+                _editableRepository.Update(venta);
 
-                await _context.SaveChangesAsync();
+                await _editableRepository.Save();
 
                 var ventaDto = new VentaDto
                 {

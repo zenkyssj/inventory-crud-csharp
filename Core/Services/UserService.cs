@@ -1,6 +1,8 @@
 ﻿using Core.DTOs;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
+using Core.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +14,19 @@ namespace Core.Services
 {
     public class UserService : ICommonService<UserDto, UserInserDto, UserUpdateDto>
     {
-        private SistemaVentasContext _context;
+        private ICommonRepository<User> _userRepository;
+        private IEditableRepository<User> _editableRepository;
 
-        public UserService(SistemaVentasContext context)
+        public UserService(ICommonRepository<User> repository,
+            IEditableRepository<User> editableRepository)
         {
-            _context = context;
+            _userRepository = repository;
+            _editableRepository = editableRepository;
         }
 
         public async Task<IEnumerable<UserDto>> Get()
         {
-            var users = await _context.Users.ToListAsync();
+            var users = await _userRepository.Get();
 
             return users.Select(u => new UserDto
             {
@@ -35,7 +40,7 @@ namespace Core.Services
 
         public async Task<UserDto> GetById(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userRepository.GetById(id);
 
             if (user != null)
             {
@@ -65,8 +70,8 @@ namespace Core.Services
 
             };
 
-            await _context.AddAsync(user);
-            await _context.SaveChangesAsync();
+            await _editableRepository.Add(user);
+            await _editableRepository.Save();
 
             var userDto = new UserDto
             {
@@ -82,7 +87,7 @@ namespace Core.Services
 
         public async Task<UserDto> Update(int id, UserUpdateDto updateDto)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userRepository.GetById(id);
 
             if (user != null)
             {
@@ -91,10 +96,8 @@ namespace Core.Services
                 user.Email = updateDto.Email;
                 user.Password = updateDto.Password;
 
-                _context.Users.Attach(user);
-                _context.Users.Entry(user).State = EntityState.Modified;
-
-                await _context.SaveChangesAsync();
+                _editableRepository.Update(user);
+                await _editableRepository.Save();
 
                 var userDto = new UserDto
                 {
@@ -113,7 +116,7 @@ namespace Core.Services
 
         public async Task<UserDto> Delete(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userRepository.GetById(id);
 
 
             if (user != null)
@@ -127,8 +130,8 @@ namespace Core.Services
                     Password = user.Password,
                 };
 
-                _context.Users.Remove(user);
-                await _context.SaveChangesAsync();
+                _editableRepository.Delete(user);
+                await _editableRepository.Save();
 
                 return userDto;
             }

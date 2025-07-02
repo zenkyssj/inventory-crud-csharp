@@ -22,7 +22,7 @@ namespace Core.Repository
             => await _context.Venta.ToListAsync();
 
         public async Task<Ventum> GetById(int id)
-            => await _context.Venta.FindAsync();
+            => await _context.Venta.FindAsync(id);
 
         public async Task Add(Ventum sale)
             => await _context.Venta.AddAsync(sale);

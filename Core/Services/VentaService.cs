@@ -14,16 +14,26 @@ namespace Core.Services
     public class VentaService : ICommonService<VentaDto, VentaInsertDto, VentaUpdateDto>
     {
         private ICommonRepository<Ventum> _saleRepository;
-        private IEditableRepository<Ventum> _editableRepository;
-        private ITransactionRepository _transactionRepository;
+        private IEditableRepository<Ventum> _saleEditableRepository;
+        private ITransactionRepository _saleTransactionRepository;
+
+        private ICommonRepository<Concepto> _conceptRepository;
+        private IEditableRepository<Concepto> _conceptEditableRepository;
+        private IHelperRepository<Ventum> _conceptHelperRepository;
 
         public VentaService(ICommonRepository<Ventum> saleRepository,
             IEditableRepository<Ventum> editableRepository,
-            ITransactionRepository transactionRepository)
+            ITransactionRepository transactionRepository,
+            ICommonRepository<Concepto> conceptRepository,
+            IEditableRepository<Concepto> conceptEditableRepository,
+            IHelperRepository<Ventum> conceptHelperRepository)
         {
             _saleRepository = saleRepository;
-            _editableRepository = editableRepository;
-            _transactionRepository = transactionRepository;
+            _saleEditableRepository = editableRepository;
+            _saleTransactionRepository = transactionRepository;
+            _conceptRepository = conceptRepository;
+            _conceptEditableRepository = conceptEditableRepository;
+            _conceptHelperRepository = conceptHelperRepository;
         }
 
         public async Task<IEnumerable<VentaDto>> Get()
@@ -61,7 +71,7 @@ namespace Core.Services
 
         public async Task<VentaDto> Add(VentaInsertDto insertDto)
         {
-            using (var transaction = _transactionRepository.Transaction())
+            using (var transaction = _saleTransactionRepository.Transaction())
             {
                 try
                 {
@@ -73,8 +83,8 @@ namespace Core.Services
 
                     };
 
-                    await _editableRepository.Add(venta);
-                    await _editableRepository.Save();
+                    await _saleEditableRepository.Add(venta);
+                    await _saleEditableRepository.Save();
 
                     foreach (var concept in insertDto.Concepts)
                     {
@@ -87,10 +97,10 @@ namespace Core.Services
                             IdProducto = concept.IdProducto
                         };
 
-                        await _context.AddAsync(concepto);
+                        await _conceptEditableRepository.Add(concepto);
                     }
 
-                    await _editableRepository.Save();
+                    await _saleEditableRepository.Save();
 
                     var ventaDto = new VentaDto
                     {
@@ -120,9 +130,9 @@ namespace Core.Services
             {
                 venta.IdCliente = updateDto.IdCliente;
 
-                _editableRepository.Update(venta);
+                _saleEditableRepository.Update(venta);
 
-                await _editableRepository.Save();
+                await _saleEditableRepository.Save();
 
                 var ventaDto = new VentaDto
                 {
@@ -140,12 +150,15 @@ namespace Core.Services
 
         public async Task<VentaDto> Delete(int id)
         {
-            var venta = await _context.Venta.FindAsync(id);
-
+            Console.WriteLine("aca");
+            var venta = await _saleRepository.GetById(id);
+            
             if (venta != null)
             {
-                var conceptos = _context.Conceptos.Where(c => c.IdVenta == venta.Id);
-                _context.Conceptos.RemoveRange(conceptos); // Elimina primero los conceptos asociados a la venta.
+                //var conceptos = _context.Conceptos.Where(c => c.IdVenta == venta.Id);
+                //_context.Conceptos.RemoveRange(conceptos); // Elimina primero los conceptos asociados a la venta.
+
+                _conceptHelperRepository.DeleteAll(venta);
 
                 var ventaDto = new VentaDto
                 {
@@ -155,8 +168,8 @@ namespace Core.Services
                     IdCliente = venta.IdCliente
                 };
 
-                _context.Venta.Remove(venta);
-                await _context.SaveChangesAsync();
+                _saleEditableRepository.Delete(venta);
+                await _saleEditableRepository.Save();
 
                 return ventaDto;
             }

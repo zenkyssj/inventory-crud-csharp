@@ -1,10 +1,12 @@
 using Core.DTOs;
 using Core.Models;
 using Core.Models.Common;
+using Core.Repository;
 using Core.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Repository;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
@@ -29,6 +31,18 @@ builder.Services.AddDbContext<SistemaVentasContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("UserConnection"));
 });
+
+// Repository
+builder.Services.AddScoped<ICommonRepository<User>, UserRepository>();
+builder.Services.AddScoped<IEditableRepository<User>, UserRepository>();
+
+builder.Services.AddScoped<ICommonRepository<Ventum>, SaleRepository>();
+builder.Services.AddScoped<IEditableRepository<Ventum>, SaleRepository>();
+builder.Services.AddScoped<ITransactionRepository, SaleRepository>();
+
+builder.Services.AddScoped<ICommonRepository<Concepto>, ConceptRepository>();
+builder.Services.AddScoped<IEditableRepository<Concepto>, ConceptRepository>();
+builder.Services.AddScoped<IHelperRepository<Ventum>, ConceptRepository>();
 
 // JWT
 var appSettingsSection = builder.Configuration.GetSection("AppSettings");

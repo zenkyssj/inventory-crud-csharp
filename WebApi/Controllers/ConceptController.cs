@@ -14,13 +14,10 @@ namespace WebApi.Controllers
     public class ConceptController : ControllerBase
     {
         private IConceptService<ConceptDto> _conceptService;
-        private IReportService<ProductDto> _conceptReportService;
 
-        public ConceptController([FromKeyedServices("conceptService")] IConceptService<ConceptDto> conceptService,
-            [FromKeyedServices("conceptReportService")] IReportService<ProductDto> conceptReportService)
+        public ConceptController([FromKeyedServices("conceptService")] IConceptService<ConceptDto> conceptService)
         {
-            _conceptService = conceptService;
-            _conceptReportService = conceptReportService;
+            _conceptService = conceptService;        
         }
 
         [HttpGet]
